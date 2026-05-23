@@ -1,0 +1,613 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PlanFlow | Daily Timeline</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#5856d6",
+                    "surface-bright": "#393939",
+                    "tertiary": "#ffb785",
+                    "outline": "#918f9f",
+                    "inverse-on-surface": "#313030",
+                    "primary": "#c2c1ff",
+                    "secondary-fixed": "#d6e3ff",
+                    "on-tertiary-fixed-variant": "#713700",
+                    "inverse-primary": "#4f4ccd",
+                    "error": "#ffb4ab",
+                    "error-container": "#93000a",
+                    "on-tertiary": "#502500",
+                    "on-error": "#690005",
+                    "on-surface-variant": "#c7c4d6",
+                    "surface-variant": "#353534",
+                    "surface-dim": "#131313",
+                    "secondary-container": "#3e90ff",
+                    "tertiary-container": "#a25100",
+                    "on-error-container": "#ffdad6",
+                    "primary-fixed-dim": "#c2c1ff",
+                    "on-tertiary-fixed": "#301400",
+                    "outline-variant": "#464554",
+                    "on-secondary-container": "#002957",
+                    "surface-container-low": "#1c1b1b",
+                    "on-surface": "#e5e2e1",
+                    "on-primary-fixed": "#0c006a",
+                    "background": "#131313",
+                    "secondary-fixed-dim": "#aac7ff",
+                    "primary-fixed": "#e2dfff",
+                    "on-secondary": "#003064",
+                    "surface-container": "#201f1f",
+                    "on-tertiary-container": "#ffe1cf",
+                    "surface-tint": "#c2c1ff",
+                    "surface-container-highest": "#353534",
+                    "on-background": "#e5e2e1",
+                    "on-secondary-fixed": "#001b3e",
+                    "tertiary-fixed": "#ffdcc6",
+                    "surface-container-high": "#2a2a2a",
+                    "inverse-surface": "#e5e2e1",
+                    "surface": "#131313",
+                    "tertiary-fixed-dim": "#ffb785",
+                    "surface-container-lowest": "#0e0e0e",
+                    "secondary": "#aac7ff",
+                    "on-secondary-fixed-variant": "#00468d",
+                    "on-primary-fixed-variant": "#3631b4",
+                    "on-primary-container": "#e7e4ff",
+                    "on-primary": "#1c0b9f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "16px",
+                    "gutter": "24px",
+                    "container-padding-desktop": "40px",
+                    "stack-sm": "8px",
+                    "unit": "8px",
+                    "container-padding-mobile": "20px",
+                    "stack-lg": "32px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Geist"],
+                    "headline-lg-mobile": ["Geist"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Geist"],
+                    "label-md": ["Geist"],
+                    "headline-lg": ["Geist"],
+                    "headline-md": ["Geist"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #000000;
+            color: #e5e2e1;
+            overflow: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #2c2c2e;
+            border-radius: 10px;
+        }
+        .glass-panel {
+            background: rgba(18, 18, 18, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #2c2c2e;
+        }
+        .bento-card {
+            background: #121212;
+            border: 1px solid #2c2c2e;
+            transition: border-color 0.2s ease;
+        }
+        .bento-card:hover {
+            border-color: #3e3e42;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md h-screen flex">
+<!-- Left: Persistent SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest border-r border-outline-variant flex flex-col py-stack-lg z-50">
+<div class="px-6 mb-10">
+<h1 class="font-display-lg text-display-lg text-primary tracking-tighter">PlanFlow</h1>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-60">Deep Focus Mode</p>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Timeline Item (Active) -->
+<a class="flex items-center gap-3 px-4 py-3 text-primary bg-primary-container/10 border-l-4 border-primary transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="timeline">timeline</span>
+<span class="font-label-md text-label-md">Timeline</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_view_week">calendar_view_week</span>
+<span class="font-label-md text-label-md">Weekly</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="task_alt">task_alt</span>
+<span class="font-label-md text-label-md">Tasks</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+</nav>
+<div class="mt-auto px-4 space-y-4">
+<button class="w-full py-3 px-4 bg-primary-container text-on-primary-container rounded-lg font-label-md flex items-center justify-center gap-2 hover:brightness-110 transition-all active:scale-[0.95]">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                New Entry
+            </button>
+<div class="border-t border-outline-variant pt-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant font-label-md hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    Settings
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant font-label-md hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                    Support
+                </a>
+</div>
+<div class="flex items-center gap-3 px-4 py-2">
+<img alt="User Profile" class="w-8 h-8 rounded-full border border-outline-variant" data-alt="A professional close-up portrait of a creative individual in a high-tech studio environment. The lighting is low-key and dramatic, with cool blue and violet highlights reflecting off surfaces. The subject has a focused expression, representing deep concentration and expertise. The overall aesthetic is clean, sharp, and modern, fitting a high-end productivity application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBflLqUskl2ufnTfzxkn7LeY7MUOAaaLRtQJRVD7uAppKZK00NBLdXVc5zdkGqElEScpQe3t7a-jn5FECDvW3kf_m92w_BuXv5bN-H3KbidfD16riaUyMtcwmBsXUYWaZ9uw822mzM_Avl2g6ZDoZBuDVxhS5rwGwhZML5ANz_pAbaeE8UfAAOU0oGiASA1iBwhBYXyVak9jhBRlxYFIjfOCMPYyXutC0tL5bVrartUV8KKzU-oBtGmg-9KVAg5AaM-DsAVDqwG6-n7">
+<div>
+<p class="font-label-md text-label-md text-on-surface">Alex Rivera</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest">Pro Member</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area (Timeline + TopBar) -->
+<main class="ml-64 flex-1 h-screen flex flex-col relative">
+<!-- TopAppBar -->
+<header class="h-16 flex items-center justify-between px-gutter bg-surface-dim/80 backdrop-blur-md border-b border-outline-variant z-40">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-headline-md text-primary">Daily Flow</h2>
+<div class="flex items-center gap-2 px-3 py-1 bg-surface-container rounded-full border border-outline-variant">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Focusing: 01:45:22</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 bg-surface-container px-4 py-1.5 rounded-full border border-outline-variant w-64">
+<span class="material-symbols-outlined text-outline text-[20px]" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-md w-full placeholder:text-outline p-0" placeholder="Search timeline..." type="text">
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Center Content: Daily Timeline -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-gutter bg-surface">
+<div class="max-w-4xl mx-auto relative">
+<!-- Timeline Header -->
+<div class="flex justify-between items-end mb-10">
+<div>
+<p class="font-label-md text-label-md text-primary mb-1">Thursday, Oct 24</p>
+<h3 class="font-headline-lg text-headline-lg">Deep Work &amp; Rituals</h3>
+</div>
+<div class="flex gap-2">
+<button class="p-2 border border-outline-variant rounded hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="p-2 border border-outline-variant rounded hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Vertical Timeline Axis -->
+<div class="relative min-h-[1440px] border-l border-outline-variant/30 ml-20">
+<!-- Fajr Marker -->
+<div class="absolute top-[300px] left-4 right-4 h-[30px] glass-panel rounded-xl p-4 flex flex-col justify-between group cursor-pointer border-l-4 border-l-tertiary">
+  <div class="flex justify-between items-center">
+    <div class="flex flex-col">
+      <span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest">Personal</span>
+      <h4 class="font-label-md text-label-md mt-1">Fajr Prayer</h4>
+    </div>
+    <div class="flex items-center gap-2">
+        <span class="text-[11px] text-outline">05:00 - 05:30 AM</span>
+        <span class="material-symbols-outlined text-outline text-[18px]" data-icon="more_vert">more_vert</span>
+    </div>
+  </div>
+</div>
+<!-- Time Slots -->
+<div class="space-y-0">
+<!-- Hour markers loop -->
+<script>
+                            const timeline = document.querySelector('.space-y-0');
+                            for(let i=0; i<24; i++) {
+                                const hour = i < 10 ? `0${i}:00` : `${i}:00`;
+                                const hourDisplay = i % 12 || 12;
+                                const ampm = i < 12 ? 'AM' : 'PM';
+                                timeline.innerHTML += `
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            ${hourDisplay} ${ampm}
+                                        </span>
+                                    </div>
+                                `;
+                            }
+                        </script>
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            12 AM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            1 AM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            2 AM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            3 AM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            4 AM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            5 AM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            6 AM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            7 AM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            8 AM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            9 AM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            10 AM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            11 AM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            12 PM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            1 PM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            2 PM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            3 PM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            4 PM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            5 PM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            6 PM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            7 PM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            8 PM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            9 PM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            10 PM
+                                        </span>
+                                    </div>
+                                
+                                    <div class="h-[60px] border-b border-outline-variant/10 relative group hover:bg-white/[0.02] transition-colors">
+                                        <span class="absolute -left-20 top-[-10px] font-label-sm text-label-sm text-outline opacity-40 group-hover:opacity-100 transition-opacity">
+                                            11 PM
+                                        </span>
+                                    </div>
+                                
+</div>
+<!-- Example Placed Card -->
+<div class="absolute top-[480px] left-4 right-4 h-[180px] glass-panel rounded-xl p-4 flex flex-col justify-between group cursor-pointer border-l-4 border-l-primary-container" style="transform: translateX(-6.42px) translateY(1.08px);">
+<div>
+<div class="flex justify-between">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Focus Session</span>
+<span class="material-symbols-outlined text-outline text-[18px]" data-icon="more_vert">more_vert</span>
+</div>
+<h4 class="font-headline-md text-headline-md mt-2">Product Architecture Review</h4>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Define core data models for the v2 rollout.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex -space-x-2">
+<img class="w-6 h-6 rounded-full border border-surface" data-alt="A profile photo of a diverse professional woman in a modern workspace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFa2I6iTQvX1xV6PmbCwLRht4aVkr-XmEqVnRZjsZLa0YDkAfAMYPmHjbX38dpNbRCwEmSDiJGg0DEX3Be3CqXVmARJVGmcVJU6Rr8KeiieIHEvQLc8uXipeOZhFAzSoQaPAuaHSiW-FCWKoOiZCf3CAN8cwHTz4D2sbZ5KonSbTLpm5CfO_3vTCi4B0_fBJYvqf05fpM9pnmKOxOohe2olt2F6N6rD4LKNEpNlumVp0A6FjhaWUAURvDEj7GNdfxsiwR9JYKRyid3">
+<img class="w-6 h-6 rounded-full border border-surface" data-alt="A profile photo of a professional man in a minimalist office." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIIjiDnrmZ45ThVxaQDCfMEhxDifQtoiZNxBrv8BXQUFPFc_DlnBk2SF2zHCc-ORz901tsajxDpm4vI4DfZpdmPfAuGKFWovpnSKuKADL1XAhV9Ma1vkvHJJHu2JR2Z5y36rplyaWPASjEFWDb2IvDFrUr-_3s4JIWy_GBdo7sCUBYkMk55lo0WX_Ru5eQgIQVyzDvgvpjFFIR1fBjwBFq-T9rUGKmaFqbF7r3uusnIDoxZA7A-T68hmaDI3LH1lgGfQGMcbigxQeB">
+</div>
+<span class="text-[12px] text-outline">+2 others</span>
+</div>
+</div><div class="absolute top-[690px] left-4 right-4 h-[60px] glass-panel rounded-xl p-4 flex flex-col justify-center group cursor-pointer border-l-4 border-l-secondary-container">
+    <div class="flex justify-between items-center">
+        <div>
+            <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Work</span>
+            <h4 class="font-label-md text-label-md mt-1">Team Sync</h4>
+        </div>
+        <span class="text-[11px] text-outline">11:30 AM - 12:30 PM</span>
+    </div>
+</div><div class="absolute top-[780px] left-4 right-4 h-[60px] glass-panel rounded-xl p-4 flex flex-col justify-center group cursor-pointer border-l-4 border-l-tertiary">
+    <div class="flex justify-between items-center">
+        <div>
+            <span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest">Personal</span>
+            <h4 class="font-label-md text-label-md mt-1">Lunch &amp; Recharge</h4>
+        </div>
+        <span class="text-[11px] text-outline">01:00 PM - 02:00 PM</span>
+    </div>
+</div><div class="absolute top-[900px] left-4 right-4 h-[90px] glass-panel rounded-xl p-4 flex flex-col justify-between group cursor-pointer border-l-4 border-l-primary">
+  <div>
+    <div class="flex justify-between">
+      <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Work</span>
+      <span class="material-symbols-outlined text-outline text-[18px]" data-icon="more_vert">more_vert</span>
+    </div>
+    <h4 class="font-label-md text-label-md mt-1">Strategic Planning</h4>
+  </div>
+  <div class="flex items-center gap-3 text-[11px] text-outline">
+    <span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span>
+    03:00 PM - 04:30 PM
+  </div>
+</div>
+<!-- Current Time Indicator -->
+<div class="absolute left-[-80px] w-[calc(100%+80px)] z-10 pointer-events-none" id="currentTimeIndicator" style="top: 6px;">
+<div class="flex items-center gap-2">
+<div class="w-16 h-4 bg-primary text-on-primary text-[10px] font-bold flex items-center justify-center rounded">LIVE</div>
+<div class="h-[2px] flex-1 bg-primary relative">
+<div class="absolute -left-1 -top-1 w-3 h-3 bg-primary rounded-full shadow-[0_0_10px_#c2c1ff]"></div>
+</div>
+</div>
+</div><div class="absolute top-[480px] left-4 right-4 h-[120px] glass-panel rounded-xl p-4 flex flex-col justify-between group cursor-pointer border-l-4 border-l-primary-container">
+  <div>
+    <div class="flex justify-between">
+      <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Focus</span>
+      <span class="material-symbols-outlined text-outline text-[18px]" data-icon="more_vert">more_vert</span>
+    </div>
+    <h4 class="font-headline-md text-headline-md mt-2">Morning Deep Work</h4>
+    <p class="font-label-md text-label-md text-on-surface-variant opacity-70">Core development and technical problem solving.</p>
+  </div>
+  <div class="flex items-center gap-3 text-[11px] text-outline">
+    <span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span>
+    08:00 AM - 10:00 AM
+  </div>
+</div><div class="absolute top-[690px] left-4 right-4 h-[60px] glass-panel rounded-xl p-4 flex flex-col justify-center group cursor-pointer border-l-4 border-l-secondary-container">
+    <div class="flex justify-between items-center">
+        <div>
+            <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Work</span>
+            <h4 class="font-label-md text-label-md mt-1">Team Sync</h4>
+        </div>
+        <span class="text-[11px] text-outline">11:30 AM - 12:30 PM</span>
+    </div>
+</div><div class="absolute top-[780px] left-4 right-4 h-[60px] glass-panel rounded-xl p-4 flex flex-col justify-center group cursor-pointer border-l-4 border-l-tertiary">
+    <div class="flex justify-between items-center">
+        <div>
+            <span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest">Personal</span>
+            <h4 class="font-label-md text-label-md mt-1">Lunch &amp; Recharge</h4>
+        </div>
+        <span class="text-[11px] text-outline">01:00 PM - 02:00 PM</span>
+    </div>
+</div><div class="absolute top-[900px] left-4 right-4 h-[90px] glass-panel rounded-xl p-4 flex flex-col justify-between group cursor-pointer border-l-4 border-l-primary">
+  <div>
+    <div class="flex justify-between">
+      <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Work</span>
+      <span class="material-symbols-outlined text-outline text-[18px]" data-icon="more_vert">more_vert</span>
+    </div>
+    <h4 class="font-label-md text-label-md mt-1">Strategic Planning</h4>
+  </div>
+  <div class="flex items-center gap-3 text-[11px] text-outline">
+    <span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span>
+    03:00 PM - 04:30 PM
+  </div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Right: Task Tray -->
+<aside class="w-80 h-screen bg-surface-container-lowest border-l border-outline-variant flex flex-col z-50">
+<div class="p-6 border-b border-outline-variant">
+<h3 class="font-headline-md text-headline-md mb-1">Task Tray</h3>
+<p class="font-label-md text-label-md text-on-surface-variant">Drag tasks into timeline</p>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+<!-- Work Card -->
+<div class="bento-card p-4 rounded-xl cursor-grab active:cursor-grabbing hover:scale-[1.02] transition-transform">
+<div class="flex justify-between items-start mb-3">
+<span class="px-2 py-0.5 bg-primary-container/20 text-primary text-[10px] font-bold rounded uppercase">Work</span>
+<span class="material-symbols-outlined text-outline" data-icon="drag_indicator">drag_indicator</span>
+</div>
+<h5 class="font-label-md text-label-md text-on-surface mb-1">E-mail Triage</h5>
+<p class="text-[12px] text-on-surface-variant line-clamp-2">Clear out inbox and respond to urgent project requests.</p>
+<div class="mt-3 flex items-center gap-2 text-[11px] text-outline">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span>
+                    30 min
+                </div>
+</div>
+<!-- Exercise Card -->
+<div class="bento-card p-4 rounded-xl cursor-grab active:cursor-grabbing hover:scale-[1.02] transition-transform">
+<div class="flex justify-between items-start mb-3">
+<span class="px-2 py-0.5 bg-secondary-container/20 text-secondary text-[10px] font-bold rounded uppercase">Exercise</span>
+<span class="material-symbols-outlined text-outline" data-icon="drag_indicator">drag_indicator</span>
+</div>
+<h5 class="font-label-md text-label-md text-on-surface mb-1">Zone 2 Cardio</h5>
+<p class="text-[12px] text-on-surface-variant line-clamp-2">Light cycling to maintain base metabolic health.</p>
+<div class="mt-3 flex items-center gap-2 text-[11px] text-outline">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span>
+                    45 min
+                </div>
+</div>
+<!-- Reading Card -->
+<div class="bento-card p-4 rounded-xl cursor-grab active:cursor-grabbing hover:scale-[1.02] transition-transform">
+<div class="flex justify-between items-start mb-3">
+<span class="px-2 py-0.5 bg-tertiary-container/20 text-tertiary text-[10px] font-bold rounded uppercase">Learning</span>
+<span class="material-symbols-outlined text-outline" data-icon="drag_indicator">drag_indicator</span>
+</div>
+<h5 class="font-label-md text-label-md text-on-surface mb-1">Deep Learning Paper</h5>
+<p class="text-[12px] text-on-surface-variant line-clamp-2">Read through the latest Transformer optimization research.</p>
+<div class="mt-3 flex items-center gap-2 text-[11px] text-outline">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span>
+                    60 min
+                </div>
+</div>
+<!-- Design Card -->
+<div class="bento-card p-4 rounded-xl cursor-grab active:cursor-grabbing hover:scale-[1.02] transition-transform">
+<div class="flex justify-between items-start mb-3">
+<span class="px-2 py-0.5 bg-primary-container/20 text-primary text-[10px] font-bold rounded uppercase">Design</span>
+<span class="material-symbols-outlined text-outline" data-icon="drag_indicator">drag_indicator</span>
+</div>
+<h5 class="font-label-md text-label-md text-on-surface mb-1">UI System Audit</h5>
+<p class="text-[12px] text-on-surface-variant line-clamp-2">Ensure consistency across all dashboard components.</p>
+<div class="mt-3 flex items-center gap-2 text-[11px] text-outline">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span>
+                    90 min
+                </div>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low border-t border-outline-variant">
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Daily Progress</span>
+<span class="font-label-sm text-label-sm text-primary">65%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[65%] rounded-full"></div>
+</div>
+<p class="mt-4 font-label-sm text-label-sm text-on-surface-variant text-center opacity-60">
+                © 2024 PlanFlow. Precision Planning.
+            </p>
+</div>
+</aside>
+<script>
+        // Update current time indicator position based on real time
+        function updateTimelineIndicator() {
+            const indicator = document.getElementById('currentTimeIndicator');
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            
+            // Assuming 60px height per hour as per the loop above
+            const pixelsPerMinute = 1; 
+            const topPosition = (hours * 60) + minutes;
+            
+            indicator.style.top = `${topPosition}px`;
+        }
+
+        // Initialize and interval
+        updateTimelineIndicator();
+        setInterval(updateTimelineIndicator, 60000);
+
+        // Subtle parallax effect on timeline cards
+        document.addEventListener('mousemove', (e) => {
+            const glassCards = document.querySelectorAll('.glass-panel');
+            const x = (window.innerWidth / 2 - e.pageX) / 50;
+            const y = (window.innerHeight / 2 - e.pageY) / 50;
+            
+            glassCards.forEach(card => {
+                card.style.transform = `translateX(${x}px) translateY(${y}px)`;
+            });
+        });
+    </script>
+
+
+</body></html>
