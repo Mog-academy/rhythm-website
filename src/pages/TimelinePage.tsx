@@ -1,4 +1,4 @@
-import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
+import { type CSSProperties, useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { fetchPrayerDataForDate } from '../services/prayerTimesService'
 import {
   addDays,
@@ -264,6 +264,84 @@ function getPrayerMinuteForDate(
   return toMinutes(prayer.hour, prayer.minute)
 }
 
+function hexToArgb(hex: string): number {
+  const clean = hex.replace('#', '')
+  const r = Number.parseInt(clean.slice(0, 2), 16)
+  const g = Number.parseInt(clean.slice(2, 4), 16)
+  const b = Number.parseInt(clean.slice(4, 6), 16)
+  return ((0xff << 24) | (r << 16) | (g << 8) | b) >>> 0
+}
+
+interface AddTaskFromTrayDialogProps {
+  onClose: () => void
+  onAdd: (name: string, durationMinutes: number, colorArgb: number | null) => void
+}
+
+function AddTaskFromTrayDialog({ onClose, onAdd }: AddTaskFromTrayDialogProps) {
+  const [name, setName] = useState('')
+  const [duration, setDuration] = useState('45')
+  const [useColor, setUseColor] = useState(false)
+  const [colorHex, setColorHex] = useState('#5856d6')
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    const trimmed = name.trim()
+    const mins = Number.parseInt(duration, 10)
+    if (!trimmed || Number.isNaN(mins) || mins <= 0) return
+    onAdd(trimmed, mins, useColor ? hexToArgb(colorHex) : null)
+  }
+
+  return (
+    <div className="add-task-dialog-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
+      <div className="add-task-dialog">
+        <div className="add-task-dialog-header">
+          <h3>New Task</h3>
+          <button className="add-task-dialog-close" onClick={onClose} aria-label="Close">✕</button>
+        </div>
+        <form className="add-task-dialog-form" onSubmit={handleSubmit}>
+          <label>
+            <span>Task Name</span>
+            <input
+              autoFocus
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter task name"
+            />
+          </label>
+          <label>
+            <span>Duration (minutes)</span>
+            <input
+              type="number"
+              min={1}
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+            />
+          </label>
+          <div className="add-task-color-row">
+            <label className="add-task-color-toggle">
+              <input type="checkbox" checked={useColor} onChange={(e) => setUseColor(e.target.checked)} />
+              <span>Custom color</span>
+            </label>
+            {useColor && (
+              <input
+                type="color"
+                value={colorHex}
+                onChange={(e) => setColorHex(e.target.value)}
+                className="add-task-color-picker"
+              />
+            )}
+          </div>
+          <div className="add-task-dialog-actions">
+            <button type="button" className="add-task-cancel" onClick={onClose}>Cancel</button>
+            <button type="submit" className="add-task-submit">Add Task</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 export function TimelinePage() {
   const state = useRhythmState()
   const actions = useRhythmActions()
@@ -279,6 +357,7 @@ export function TimelinePage() {
   >({})
   const [dragGhost, setDragGhost] = useState<DragGhostState | null>(null)
   const [dragGhostResolvedMinute, setDragGhostResolvedMinute] = useState<number | null>(null)
+  const [showAddTrayTaskDialog, setShowAddTrayTaskDialog] = useState(false)
   const nextDate = useMemo(() => addDays(selectedDate, 1), [selectedDate])
 
   const maghribStartMinute =
@@ -294,26 +373,21 @@ export function TimelinePage() {
       return 'user'
     }
 
-    const selectedItems = getMergedScheduleForDate(state, selectedDate)
-      .filter((item) => toMinutes(item.startHour, item.startMinute) >= maghribStartMinute)
-      .map((item) => ({
-        item,
-        sourceDateISO: selectedDate,
-        listType: resolveListTypeForDate(selectedDate, item.instanceId),
-        relativeMinute: toMinutes(item.startHour, item.startMinute) - maghribStartMinute,
-      }))
+    const allItems = getMergedScheduleForDate(state, selectedDate)
+      .map((item) => {
+        const absMinute = toMinutes(item.startHour, item.startMinute)
+        const raw = absMinute - maghribStartMinute
+        const relativeMinute = raw < 0 ? raw + 24 * 60 : raw
+        return {
+          item,
+          sourceDateISO: selectedDate,
+          listType: resolveListTypeForDate(selectedDate, item.instanceId),
+          relativeMinute,
+        }
+      })
 
-    const nextItems = getMergedScheduleForDate(state, nextDate)
-      .filter((item) => toMinutes(item.startHour, item.startMinute) < maghribStartMinute)
-      .map((item) => ({
-        item,
-        sourceDateISO: nextDate,
-        listType: resolveListTypeForDate(nextDate, item.instanceId),
-        relativeMinute: 24 * 60 - maghribStartMinute + toMinutes(item.startHour, item.startMinute),
-      }))
-
-    return [...selectedItems, ...nextItems].sort((a, b) => a.relativeMinute - b.relativeMinute)
-  }, [state, selectedDate, nextDate, maghribStartMinute])
+    return allItems.sort((a, b) => a.relativeMinute - b.relativeMinute)
+  }, [state, selectedDate, maghribStartMinute])
 
   const userScheduled = useMemo(
     () => schedule.filter((entry) => !isAutoTaskId(entry.item.task.id)),
@@ -550,8 +624,7 @@ export function TimelinePage() {
     }
 
     const absoluteMinute = maghribStartMinute + resolvedRelativeMinute
-    const dayOffset = absoluteMinute >= 24 * 60 ? 1 : 0
-    const targetDateISO = dayOffset === 1 ? nextDate : selectedDate
+    const targetDateISO = selectedDate
     const { hour, minute } = fromMinutes(absoluteMinute)
 
     if (payload.type === 'library' && payload.taskId) {
@@ -744,7 +817,7 @@ export function TimelinePage() {
 
       const finalDuration = Math.max(1, finalEnd - finalStart)
       const absoluteStartMinute = maghribStartMinute + finalStart
-      const targetDateISO = absoluteStartMinute >= 24 * 60 ? nextDate : selectedDate
+      const targetDateISO = selectedDate
       const { hour, minute } = fromMinutes(absoluteStartMinute)
 
       if (targetDateISO === activeResize.sourceDateISO) {
@@ -786,7 +859,6 @@ export function TimelinePage() {
   }, [
     actions,
     maghribStartMinute,
-    nextDate,
     schedule,
     resizePreviewByInstanceId,
     resizeState,
@@ -1162,6 +1234,14 @@ export function TimelinePage() {
         <article className="timeline-right panel">
           <div className="timeline-right-header">
             <h3>Task Tray</h3>
+            <button
+              className="tray-add-btn"
+              onClick={() => setShowAddTrayTaskDialog(true)}
+              aria-label="Add task"
+              title="Add task"
+            >
+              +
+            </button>
           </div>
 
           <div className="timeline-tray-list">
@@ -1231,6 +1311,23 @@ export function TimelinePage() {
           </div>
         </article>
       </aside>
+
+      {showAddTrayTaskDialog && (
+        <AddTaskFromTrayDialog
+          onClose={() => setShowAddTrayTaskDialog(false)}
+          onAdd={(name, durationMinutes, colorArgb) => {
+            actions.addLibraryTask({
+              title: name,
+              durationMinutes,
+              icon: 'task',
+              category: 'DEFAULT',
+              customColorArgb: colorArgb,
+              recurringDays: [],
+            })
+            setShowAddTrayTaskDialog(false)
+          }}
+        />
+      )}
     </section>
   )
 }

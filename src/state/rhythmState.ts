@@ -312,7 +312,7 @@ function buildAutoSleepTask(prayerTimes: PrayerTime[], sleepSettings: SleepSetti
     sleepEnd += 24 * 60
   }
 
-  const duration = Math.max(15, sleepEnd - sleepStart)
+  const duration = Math.max(30, sleepEnd - sleepStart)
   const start = fromMinutes(sleepStart)
 
   return [
@@ -320,11 +320,11 @@ function buildAutoSleepTask(prayerTimes: PrayerTime[], sleepSettings: SleepSetti
       instanceId: 'auto-sleep-main',
       task: {
         id: 'auto-sleep-main',
-        title: 'Sleep',
+        title: 'Sleep Time',
         durationMinutes: duration,
         icon: 'bedtime',
         category: 'DEFAULT',
-        customColorArgb: null,
+        customColorArgb: -16777216,
         recurringDays: [],
       },
       startHour: start.startHour,
@@ -338,8 +338,10 @@ function buildAutoSleepTask(prayerTimes: PrayerTime[], sleepSettings: SleepSetti
 }
 
 export function getMergedScheduleForDate(state: RhythmState, dateISO: string): ScheduledTask[] {
-  const userTasks = state.userTasksByDate[dateISO] ?? []
-  const weeklyTasks = state.weeklyTasksByDate[dateISO] ?? []
+  const userTasks = (state.userTasksByDate[dateISO] ?? []).filter((item) => !isAutoTaskId(item.task.id))
+  const weeklyTasks = (state.weeklyTasksByDate[dateISO] ?? []).filter(
+    (item) => !isAutoTaskId(item.task.id),
+  )
   const prayerTimes = state.prayerTimesByDate[dateISO] ?? []
   const sleepSettings = state.sleepSettingsByDate[dateISO] ?? state.defaultSleepSettings
 

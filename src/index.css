@@ -601,12 +601,183 @@ body {
 
 .timeline-right-header {
   margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tray-add-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--outline-variant);
+  background: var(--surface-container);
+  color: var(--primary);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.tray-add-btn:hover {
+  background: var(--primary-container);
+  border-color: var(--primary);
+  color: var(--on-primary-container);
+}
+
+/* Add Task Dialog */
+
+.add-task-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.add-task-dialog {
+  background: var(--surface-container);
+  border: 1px solid var(--outline-variant);
+  border-radius: 16px;
+  padding: 24px;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  box-shadow: var(--shadow-soft);
+}
+
+.add-task-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.add-task-dialog-header h3 {
+  margin: 0;
+  font-size: 17px;
+  color: var(--on-surface);
+}
+
+.add-task-dialog-close {
+  background: none;
+  border: none;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.add-task-dialog-close:hover {
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+}
+
+.add-task-dialog-form {
+  display: grid;
+  gap: 16px;
+}
+
+.add-task-dialog-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--on-surface-variant);
+}
+
+.add-task-dialog-form input[type="text"],
+.add-task-dialog-form input[type="number"] {
+  background: var(--surface-container-high);
+  border: 1px solid var(--outline-variant);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: var(--on-surface);
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+}
+
+.add-task-dialog-form input[type="text"]:focus,
+.add-task-dialog-form input[type="number"]:focus {
+  border-color: var(--primary);
+}
+
+.add-task-color-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.add-task-color-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--on-surface-variant);
+}
+
+.add-task-color-picker {
+  width: 36px;
+  height: 28px;
+  border: 1px solid var(--outline-variant);
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.add-task-dialog-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.add-task-cancel {
+  background: none;
+  border: 1px solid var(--outline-variant);
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-task-cancel:hover {
+  background: var(--surface-container-high);
+}
+
+.add-task-submit {
+  background: var(--primary-container);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: var(--on-primary-container);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.add-task-submit:hover {
+  opacity: 0.88;
 }
 
 .timeline-right-header p {
   margin: 4px 0 0;
   color: var(--on-surface-variant);
 }
+
+
 
 .timeline-tray-list {
   min-height: 0;
